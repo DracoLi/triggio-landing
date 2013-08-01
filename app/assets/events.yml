@@ -1,0 +1,32 @@
+- source: Waitlist
+  msg: A new company just joined our waitlist
+- source: Draco
+  msg: Congrats team! We just got Loose Button to join our waitlist!
+- source: Social
+  msg: Someone just shared Triggio on Facebook!
+- source: Viewers
+  msg: Someone just visited Triggio :)
+- source: Milestone
+  msg: 20 registered companies today, woohooo!
+- source: Waitlist
+  msg: A new company just joined our waitlist
+- source: Social
+  msg: New like on Facebook!
+- source: Social
+  msg: Someone just shared Triggio on Twitter!
+- source: Waitlist
+  msg: A new company just joined our waitlist
+- source: Github
+  msg: Draco just pushed some code to Triggio
+- source: Social
+  msg: Someone just shared Triggio on Facebook!
+- source: Waitlist
+  msg: A new company just joined our waitlist
+
+# Draco: Contrats team! We got [company name] to join our waitlist!
+# Visitors: +10 visiters to beta site!
+# Register: Twitter just joined Triggio's Wait List!
+# Milestone: 30 registered companies today, wohhoo!
+# Social: New like on Facebook!
+# Social: Someone just shared our site on Twitter/Facebook!
+# Github: Draco just pushed some updates to Triggio!

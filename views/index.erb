@@ -1,34 +1,24 @@
 <div id="demoLayer">
-  <div class="trigger-header">
-    <h1>Triggio</h1>
-  </div>
-
-  <div class="events-wrapper list">
-    <div class="events">
-      <div class="event">
-        <div class="event-content clearfix">
-          <div class="event-type">{{ type }}</div>
-          <div class="event-msg">{{ message }}</div>  
-        </div>          
-      </div>
+  <div class="content">
+    <div class="events-wrapper list">
+      <ul class="events fly-simplified"> <!-- flip, fly-simplified -->
+        <!-- Events -->
+      </ul>
     </div>
   </div>
 </div>
 
-<div id="signupLayer">
-  
-  <h1>Triggio</h1>
-  <p>realtime sound powered events for your company</p>
-
-  <form action="">
-    <div class="control-group">
-      <label for="">Company Name:</label>
-      <input type="text">
-    </div>
-    <div class="control-group">
-      <label for="">Your Email:</label>
-      <input type="text">
-    </div>
-  </form>
-
+<div class="demo-overlay">
+  <div class="trig-overlay"></div>
+  <div class="trig-gradient"></div>
 </div>
+
+<script>
+  // Config filters polyfill
+  var polyfilter_scriptpath = '/css-filters-polyfill/lib/';
+
+  // Load our premade events
+  $(function() {
+    window.AwesomeTools.addInitialEvents($.parseJSON('<%= @initial_events %>'));
+  });
+</script>

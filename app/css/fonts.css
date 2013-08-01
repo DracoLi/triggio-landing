@@ -1,0 +1,33 @@
+@font-face {
+  font-family: 'eightbit';
+  src: url('/fonts/8-bit_wonder-webfont.eot');
+  src: url('/fonts/8-bit_wonder-webfont.eot?#iefix') format('embedded-opentype'),
+       url('/fonts/8-bit_wonder-webfont.woff') format('woff'),
+       url('/fonts/8-bit_wonder-webfont.ttf') format('truetype'),
+       url('/fonts/8-bit_wonder-webfont.svg#eightbit') format('svg');
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+    font-family: 'heroregular';
+    src: url('/fonts/hero-webfont.eot');
+    src: url('/fonts/hero-webfont.eot?#iefix') format('embedded-opentype'),
+         url('/fonts/hero-webfont.woff') format('woff'),
+         url('/fonts/hero-webfont.ttf') format('truetype'),
+         url('/fonts/hero-webfont.svg#heroregular') format('svg');
+    font-weight: normal;
+    font-style: normal;
+
+}
+
+@font-face {
+    font-family: 'hero_lightlight';
+    src: url('/fonts/hero_light-webfont.eot');
+    src: url('/fonts/hero_light-webfont.eot?#iefix') format('embedded-opentype'),
+         url('/fonts/hero_light-webfont.woff') format('woff'),
+         url('/fonts/hero_light-webfont.ttf') format('truetype'),
+         url('/fonts/hero_light-webfont.svg#hero_lightlight') format('svg');
+    font-weight: normal;
+    font-style: normal;
+}

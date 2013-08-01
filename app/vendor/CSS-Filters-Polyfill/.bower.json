@@ -1,0 +1,12 @@
+{
+  "name": "CSS-Filters-Polyfill",
+  "homepage": "https://github.com/git@github.com:Schepp/CSS-Filters-Polyfill",
+  "_release": "ce27078643",
+  "_resolution": {
+    "type": "branch",
+    "branch": "master",
+    "commit": "ce270786437e8447f2275b8a3faf4b7210f28b28"
+  },
+  "_source": "git@github.com:Schepp/CSS-Filters-Polyfill.git",
+  "_target": "*"
+}
