@@ -1,6 +1,8 @@
 @import "modules/base";
 @import "partials/colors";
 
+$demoOverLayAnimationDuration: 1s;
+
 body, title, p, h1, h2, h3, h4, h5, div {
   @include typeface;
 }
@@ -48,6 +50,10 @@ body {
       border-bottom: 2px solid $white;
       font-family: "heroregular";
 
+      &.error {
+        .glyphicon { color: #C50800; }
+      }
+
       .glyphicon {
         float: left;
         margin-top: 13px;
@@ -80,17 +86,22 @@ body {
       font-size: 20px;
       margin: 0 auto;
       margin-top: 33px;
+
+      &.loading {
+        background-color: #525252;
+        cursor: not-allowed;
+      }
     }
   }
 }
 
 .demo-overlay { 
   opacity: 0; 
-  -webkit-transition: opacity, 1s;
-  -moz-transition: opacity, 1s;
-  -ms-transition: opacity, 1s;
-  -o-transition: opacity, 1s;
-  transition: opacity, 1s;
+  -webkit-transition: opacity, $demoOverLayAnimationDuration ease;
+  -moz-transition: opacity, $demoOverLayAnimationDuration ease;
+  -ms-transition: opacity, $demoOverLayAnimationDuration ease;
+  -o-transition: opacity, $demoOverLayAnimationDuration ease;
+  transition: opacity, $demoOverLayAnimationDuration ease;
 }
 
 .trig-overlay, .trig-gradient {

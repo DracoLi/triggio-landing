@@ -16,6 +16,7 @@ gem "activerecord"
 gem "sinatra-activerecord"
 gem 'validates_email_format_of'
 gem "sinatra-handlebars"
+gem 'json'
 
 group :development do
   gem 'sqlite3'

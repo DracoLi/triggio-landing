@@ -90,6 +90,102 @@ window.AwesomeTools =
       $oneEvent.css('opacity', opacity / 100)
       opacity = Math.max(opacity - @opacityChange, 0)
 
+  validateEmail: (email) ->
+    re = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/
+    re.test(email)
+
+  handleSignupError: (field, msg) ->
+    console.log "handle #{field} Error: #{msg}"
+    $(".signup-form .#{field}")
+      .focus()
+      .parents('.control-group')
+      .addClass('error')
+
+  configureSignupForm: ->
+    $signup = $('.signup-form')
+    $('.signup-form').submit =>
+
+      # Do nothing when loading
+      if $('.signup-form').hasClass 'loading'
+        return false
+      
+      # Remove all errors
+      $signup
+        .find('.control-group')
+        .removeClass('error')
+        .find('.oh-no').html('')
+
+      # Error checking
+      hasError = false
+      company = $signup.find('.company').val()
+      email = $signup.find('.email').val()
+
+      # validate email
+      unless email? and AwesomeTools.validateEmail(email)
+        AwesomeTools.handleSignupError 'email', 'Invalid emails'
+        hasError = true
+
+      # validate company name
+      unless company? and company.length > 1
+        AwesomeTools.handleSignupError 'company', 'Invalid company name'
+        hasError = true
+
+      return false if hasError
+
+      # Submit waitlist if passed javascript validation
+      $signup.addClass 'loading'
+      $submit = $signup.find('input[type="submit"]').addClass 'loading'
+      $.post('/signup', {company: company, email: email})
+      .done (data) =>
+        # Server side validation returned
+        if data.success
+          console.log 'success'
+        else
+          for field in data.error_fields
+            @handleSignupError field, data.msg[field][0]
+        console.log data
+      .fail -> 
+        console.log 'failed'
+        $signup.find('.oh-no').html 'Oh no! Something went wrong...'
+      .always -> 
+        $signup.removeClass 'loading'
+        $submit.removeClass 'loading'
+
+      console.log 'company registered!'
+
+      return false
+
+  signedupDemo: ->
+    console.log 'signedup demo'
+
+    # Remove signin form
+    
+    # Play signedup events
+    
+    # Show success and share overlay
+    
+    @configureShare()
+  
+  configureShare: ->
+    $('.share-links .fb').click (e) ->
+      e.preventDefault()
+      fbUrl = "https://www.facebook.com/sharer/sharer.php?u=#{encodeURIComponent(location.href)}"
+      @openShareWindow fbUrl
+
+    $('.share-links .tw').click (e) ->
+      e.preventDefault()
+      twitterMsg = "I just signed up for Triggio for my company! www.trigg.io"
+      twUrl = "http://twitter.com/home?status=#{encodeURIComponent(twitterMsg)}"
+      @openShareWindow fbshareUrl
+
+  openShareWindow: (url) ->
+    width = 626
+    height = 436
+    x = screen.width/2 - width/2
+    y = screen.height/2 - height/2
+    window.open url, 'Share', 
+                "width=#{width},height=#{height},left=#{x},top=#{y}"
+
 $ ->
   # Enable placeholder cross browser
   $('input').placeholder()
@@ -115,6 +211,8 @@ $ ->
         overflowY: 'scroll'
         removalDelay: 300
       $.magnificPopup.open config
+
+      AwesomeTools.configureSignupForm()
     , 4000
   , 2000
   

@@ -1,5 +1,6 @@
 require 'sinatra'
 require 'sinatra/support'
+require 'json'
 
 # Database
 require 'sinatra/activerecord'
@@ -70,6 +71,7 @@ class MyApp < Sinatra::Base
       '/vendor/bootstrap-glyphicons/bootstrap-glyphicons.css',
       '/vendor/magnific-popup/dist/magnific-popup.css',
       '/vendor/stroll/css/stroll.min.css',
+      '/vendor/hint.css/hint.css',
       '/css/fonts.css',
       '/css/main.css'
     ]
@@ -82,6 +84,23 @@ class MyApp < Sinatra::Base
     @lineup_count = WaitList.count
     @initial_events = JSON.dump YAML.load(File.read('app/assets/events.yml'))
     erb :index
+  end
+
+  post '/signup' do
+    # Get company name and email
+    company = params[:company]
+    email = params[:email]
+
+    # Save data
+    a = WaitList.create(company: company, email: email)
+    unless a.valid?
+      error_fields = a.errors.messages.keys
+      error_msg = a.errors.messages
+    end
+    fsd
+    content_type :json
+    {success: a.valid?, :error_fields => error_fields, :msg => error_msg }.to_json
+    
   end
 
   run! if app_file == $0
