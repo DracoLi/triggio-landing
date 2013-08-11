@@ -146,11 +146,8 @@ class MyApp < Sinatra::Base
   run! if app_file == $0
 end
 
-
-# get '/js/:script.js' do |script|
-#   coffee :"coffee/#{script}"
-# end
-
-# get '/css/:stylesheet.css' do |stylesheet|
-#   scss :"scss/#{stylesheet}"
-# end
+class Sinatra::AssetPack::Package
+  def to_production_html(path_prefix, options={})
+    to_development_html(path_prefix, options)
+  end
+end
