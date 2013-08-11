@@ -22,6 +22,10 @@ require "sinatra/reloader"
 require 'validates_email_format_of'
 require './models/wait_lists.rb'
 
+# Set default time zone
+timezone = 'Eastern Time (US & Canada)'
+ActiveRecord::Base.default_timezone = timezone
+Time.zone = timezone
 
 class MyApp < Sinatra::Base
   # Set app root

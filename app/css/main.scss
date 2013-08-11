@@ -89,16 +89,13 @@ body {
   font-size: 12px;
   z-index: 99999;
   display: block;
-  @include single-transition(all, 1s, ease);
+  @include single-transition(all, 0.4s, ease-out);
 
   a { color: $white; } 
 
   &.hidden {
-    margin-left: 0;
+    margin-left: -10px;
     opacity: 0;
-    display: none;
-    visibility: hidden;
-    @include single-transition(all, 0s, ease);
   }
 }
 

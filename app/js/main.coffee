@@ -38,7 +38,7 @@ window.AwesomeTools =
   # Handles animating all newly added events in demoLayer
   animateInEvents: ->
     delay = 0           # Delay for each event
-    delayInterval = 50  # Delay between events animation
+    delayInterval = 70  # Delay between events animation
     opacity = 100       # Starting event opacity
 
     # Loop through all events top animate them in with css3
@@ -173,6 +173,8 @@ window.AwesomeTools =
       # Post request to signup
       $.post('/signup', {company: company, email: email})
         .done (data) =>
+          console.log data if DEBUG
+          
           # Server side validation returned
           if data.success
             @targetCompany = company
@@ -201,6 +203,7 @@ window.AwesomeTools =
     $.magnificPopup.close()
     $('.demo-overlay').css 'opacity': 0
     $('#demoLayer').css 'polyfilter', 'blur(0px)'
+    $('.learn-more').addClass('hidden')
     
     # Play signedup events
     firstEventDuration = 4000
@@ -249,7 +252,7 @@ window.AwesomeTools =
     twttr.widgets.createShareButton 'http://trigg.io', 
       $('.share-links .tw-share')[0], null, 
         count: 'none'
-        text: 'I signed up my company for Triggio. Realtime musical notifications, '
+        text: 'I signed up my company for Triggio. Realtime musical notifications'
     twttr.ready (twttr) =>
       twttr.events.bind 'tweet', (event) =>
         @websiteShared()
