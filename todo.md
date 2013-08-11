@@ -5,7 +5,7 @@
 4. ~~loading/working message for waitlist submission~~
 5. ~~fix created timezone~~
 6. finalize sign up email content
-7. set up herou newrelic ping
-8. find ways to concat assets (since sintra assetpack not working)
-9. Test triggio on production
-10. come up easy way to get waitlist data from production
+7. ~~set up herou newrelic ping~~
+8. Test triggio on production
+9. ~~come up easy way to get waitlist data from production~~
+10. find ways to concat assets (since sintra assetpack not working)
