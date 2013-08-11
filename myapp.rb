@@ -32,6 +32,10 @@ class MyApp < Sinatra::Base
   base = File.dirname(__FILE__)
   set :root, base
 
+  configure :production do
+    require 'newrelic_rpm'
+  end
+
   configure :development do
     register Sinatra::Reloader
   end
@@ -122,7 +126,7 @@ class MyApp < Sinatra::Base
           user_name: "draco@dracoli.com",
           password: "NdosrPoWlLga9ATRDikxYA",
           authentication: :plain,
-          domain: "localhost"
+          domain: "trigg.io"
         }
       })
     end

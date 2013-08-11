@@ -18,6 +18,7 @@ gem 'validates_email_format_of'
 gem "sinatra-handlebars"
 gem 'json'
 gem "pony"
+gem 'newrelic_rpm'
 
 group :development do
   gem 'sqlite3'
