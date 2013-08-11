@@ -81,6 +81,16 @@ body {
   }
 }
 
+.learn-more {
+  position: fixed;
+  bottom: 5px;
+  margin-left: 10px;
+  font-size: 12px;
+  z-index: 99999;
+
+  a { color: $white; } 
+}
+
 .signup {
 
   form.signup-form {
