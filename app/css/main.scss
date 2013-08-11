@@ -85,10 +85,21 @@ body {
   position: fixed;
   bottom: 5px;
   margin-left: 10px;
+  opacity: 1;
   font-size: 12px;
   z-index: 99999;
+  display: block;
+  @include single-transition(all, 1s, ease);
 
   a { color: $white; } 
+
+  &.hidden {
+    margin-left: 0;
+    opacity: 0;
+    display: none;
+    visibility: hidden;
+    @include single-transition(all, 0s, ease);
+  }
 }
 
 .signup {
@@ -115,7 +126,15 @@ body {
       font-family: "heroregular";
 
       &.error {
-        .glyphicon { color: #C50800; }
+        .glyphicon { color: $error-color; }
+      }
+
+      .error-msg { 
+        text-transform: lowercase;
+        margin-top: 50px;
+        color: #E56C67;
+        font-size: 13px;
+        text-align: right;
       }
 
       .glyphicon {
@@ -174,10 +193,6 @@ $experimental-support-for-svg: true;
 .trig-overlay {
   background-color: $bg-color;
   opacity: 0.8;
-
-  // -webkit-box-shadow: inset 10px 10px 200px #000;
-  // -moz-box-shadow: inset 10px 10px 200px #000;
-  // box-shadow: inset 10px 10px 200px #000;
 }
 
 #demoLayer {
@@ -188,7 +203,7 @@ $experimental-support-for-svg: true;
   height: 100%;
   overflow: hidden;
   
-  // Neato background
+  // Neato background with slight gradient
   background-color: $bg-color;
   @include filter-gradient(#262626, #1c1c1c, vertical); // IE6-9
   @include background-image(linear-gradient(top, #2B2B2B 0%, #0E0E0E 80%));

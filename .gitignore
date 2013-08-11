@@ -24,4 +24,4 @@ tmp
 _yardoc
 doc/
 
-.sqlite3
+*.sqlite3

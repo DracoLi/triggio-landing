@@ -13,8 +13,10 @@ window.AwesomeTools =
   # Opacity decreasing rate for our events list
   opacityChange: 10
 
+  # Saves our waitlist data for recording link sharing
   targetCompany: null
   targetEmail: null
+  waitlist: null
 
   # Adds events to our demo layer and animate them in fancily
   addInitialEvents: (events) ->
@@ -32,31 +34,38 @@ window.AwesomeTools =
       @animateInEvents()
     , 500
 
+
   # Handles animating all newly added events in demoLayer
   animateInEvents: ->
-    delay = 0
-    delayInterval = 50
-    opacity = 100
+    delay = 0           # Delay for each event
+    delayInterval = 50  # Delay between events animation
+    opacity = 100       # Starting event opacity
 
     # Loop through all events top animate them in with css3
     $('#demoLayer .event').each (index, eventNode) =>
       $oneEvent = $(eventNode)
-      ((opacity, $oneEvent, delay) ->
+
+      # Encapsulates current loop values
+      do (opacity, $oneEvent, delay) ->
         setTimeout ->
           $oneEvent
             .css('opacity', opacity / 100)
             .removeClass('future')
         , delay
-      )(opacity, $oneEvent, delay)
+
+      # Prepare values for the next event
       delay += delayInterval
       opacity = Math.max(opacity - @opacityChange, 0)
 
-  sendEvent: (source, msg, soundName) ->
-    console.log "(ADD) #{source}: #{msg} (#{soundName})"
 
+  # Send an event to our demo
+  sendEvent: (source, msg, soundName) ->
+    console.log "(ADD) #{source}: #{msg} (#{soundName})" if DEBUG
+
+    # Make sure when adding new events, they are animated differently
     $('#demoLayer .events').attr 'class', 'events fan' # or wave
 
-    # Animate in event
+    # Add new event to DOM
     $events = $('#demoLayer .events')
     oneEvent =  {source: source, msg: msg}
     $eventHTML = $(HandlebarsTemplates['event'](oneEvent))
@@ -67,57 +76,76 @@ window.AwesomeTools =
       .addClass('past')
     $events.css('margin-top', '-56px')
 
-    # Animate event with a short delay for initial css to take effect
+    # Animate event with a short delay for adjusted css to take effect
     setTimeout =>
+      # Animates in new event
       $eventHTML
         .removeClass('past')
         .css('opacity', 1)
+
+      # Animates the positioning of all events
       $events.transition
         'delay': 200
         'margin-top': 0
       , 600
+
+      # This updates rest of the events to reflect the new event
+      # Currently this updates the opacity
       @updateEvents()
     , 50
 
-    # Play sound
+    # Play event sound
     soundObj = soundManager.getSoundById(soundName)
     unless soundObj?
+      # Create sound on demand
       soundObj = soundManager.createSound
                     id: soundName
                     url: "/assets/clips/#{soundName}.mp3"
     soundObj.play()
 
+
+  # Updates demo events' opacity
   updateEvents: ->
     opacity = 100
     $('#demoLayer .event').each (index, eventNode) =>
       $oneEvent = $(eventNode)
-      $oneEvent.css('opacity', opacity / 100)
+      $oneEvent.css 'opacity', opacity / 100
       opacity = Math.max(opacity - @opacityChange, 0)
 
+
+  # Simple front-end email validation regex
   validateEmail: (email) ->
     re = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/
     re.test(email)
 
+
+  # Display error for signup form
   handleSignupError: (field, msg) ->
-    console.log "handle #{field} Error: #{msg}"
+    console.log "handle #{field} Error: #{msg}" if DEBUG
     $(".signup-form .#{field}")
       .focus()
       .parents('.control-group')
       .addClass('error')
+      .find('.error-msg')
+      .html(msg)
+
+
+  clearSignupErrors: ->
+    $signup = $('.signup-form')
+    $signup
+      .find('.control-group')
+      .removeClass('error')
+      .find('.error-msg').html('')
+    $signup.find('.oh-no').html('')
+
 
   configureSignupForm: ->
     $signup = $('.signup-form')
-    $('.signup-form').submit =>
-
+    $signup.submit =>
       # Do nothing when loading
-      if $('.signup-form').hasClass 'loading'
-        return false
-      
-      # Remove all errors
-      $signup
-        .find('.control-group')
-        .removeClass('error')
-        .find('.oh-no').html('')
+      return false if $('.signup-form').hasClass 'loading'
+        
+      @clearSignupErrors()      
 
       # Error checking
       hasError = false
@@ -126,50 +154,58 @@ window.AwesomeTools =
 
       # validate email
       unless email? and AwesomeTools.validateEmail(email)
-        @handleSignupError 'email', 'Invalid emails'
+        @handleSignupError 'email', 'invalid email'
         hasError = true
 
       # validate company name
       unless company?.length > 1
-        @handleSignupError 'company', 'Invalid company name'
+        @handleSignupError 'company', 'invalid company name'
         hasError = true
 
       return false if hasError
 
-      # Submit waitlist if passed javascript validation
+      # Show form loading
       $signup.addClass 'loading'
       $submit = $signup.find('input[type="submit"]').addClass 'loading'
+      oriSubValue = $submit.val()
+      $submit.val 'Trigging...'
+
+      # Post request to signup
       $.post('/signup', {company: company, email: email})
         .done (data) =>
           # Server side validation returned
           if data.success
-            
             @targetCompany = company
             @targetEmail = email
+            @waitlist = data.queue
 
             # Show our signedup demo after signup
-            @signedupDemo data.queue
+            @signedupDemo()
           else
             for field in data.error_fields
               @handleSignupError field, data.msg[field][0]
         .fail -> 
-          console.log 'failed'
+          console.log 'failed' if DEBUG
+          $submit.val oriSubValue
           $signup.find('.oh-no').html 'Oh no! Something went wrong...'
         .always -> 
           $signup.removeClass 'loading'
           $submit.removeClass 'loading'
 
-      return false
+      false
 
-  signedupDemo: (queue) ->
-    console.log 'playing signedup demo'
 
+  # Play a cool Triggio demo after someone signs up
+  signedupDemo: ->
     # Remove signin form
     $.magnificPopup.close()
     $('.demo-overlay').css 'opacity': 0
     $('#demoLayer').css 'polyfilter', 'blur(0px)'
     
     # Play signedup events
+    firstEventDuration = 4000
+    secondEventDuration = 6400
+    demoDelay = 1500
     setTimeout =>
       @sendEvent 'Waitlist', 
                  "#{@targetCompany} just joined our waitlist!",
@@ -179,22 +215,19 @@ window.AwesomeTools =
                    "OMG congrats team! #{@targetCompany} just signedup for Triggio!",
                    'killing-spree'
         setTimeout =>
-          @showSharePopup(queue)
-        , 6800
-      , 4000
-    , 1500
-    
-    # Show success and share overlay
-    
-    @configureShare()
+          @showSharePopup()
+        , secondEventDuration
+      , firstEventDuration
+    , demoDelay
   
-  showSharePopup: (queue) ->
+
+  showSharePopup: ->
     # Show our overlay, hides demo
     $('.demo-overlay').css 'opacity': 1
     $('#demoLayer').css 'polyfilter', 'blur(3px)'
 
     # Show share popup
-    shareHTML = HandlebarsTemplates['share'](queue)
+    shareHTML = HandlebarsTemplates['share'](@waitlist)
     config = 
       'items': {src: shareHTML}
       type: 'inline'
@@ -206,6 +239,7 @@ window.AwesomeTools =
 
     @configureShare()
 
+
   configureShare: ->
     # Configure fb button
     $('.share-links .fb-share').click (e) =>
@@ -213,15 +247,25 @@ window.AwesomeTools =
 
     # Configure twitter button and callback
     twttr.widgets.createShareButton 'http://trigg.io', 
-      $('.share-links .tw-share')[0],
-      null
-      ,
+      $('.share-links .tw-share')[0], null, 
         count: 'none'
-        text: 'I just signed up my company for Triggio! Realtime musical notifications.'
-
+        text: 'I signed up my company for Triggio. Realtime musical notifications, '
     twttr.ready (twttr) =>
       twttr.events.bind 'tweet', (event) =>
         @websiteShared()
+
+
+  shareFBContent: ->
+    FB.ui
+      method: 'feed'
+      name: 'Triggio | Realtime Musical Notifications'
+      description: "Triggio, realtime musical notifications for your company. Now open for limited beta signups."
+      link: "http://www.trigg.io"
+      picture: "http://www.trigg.io/triggio-fb.png"
+    , (response) =>
+      if response and response.post_id
+        @websiteShared()
+
 
   websiteShared: ->
     # Update UI to reflect shared
@@ -231,16 +275,6 @@ window.AwesomeTools =
     # Tell our database that this user has shared
     $.post '/shared', {email: @targetEmail}
 
-  shareFBContent: ->
-    FB.ui
-      method: 'feed'
-      name: 'Triggio | Realtime Musical Notifications'
-      description: "Triggio, the realtime musical notifications for your company. Now open for limited beta signups."
-      link: "http://www.trigg.io"
-      picture: "http://www.trigg.io/triggio-fb.png"
-    , (response) =>
-      if response and response.post_id
-        @websiteShared()
 
 $ ->
   # Enable placeholder cross browser
@@ -249,13 +283,18 @@ $ ->
   ### Start our demo ###
 
   # Send +1 visior event
+  newVisitorDemoDuration = 4 * 1000
   setTimeout ->
     AwesomeTools.sendEvent('Viewers', 
                            'Someone just visited Triggio :)', 
                            'new-visitor')
     setTimeout ->
+      # Animate in our overlay
       $('.demo-overlay').css 'opacity': 1
       $('#demoLayer').css 'polyfilter', 'blur(3px)'
+
+      # Animate in our learn more link since its not part of waitlist popup
+      $('.learn-more').removeClass('hidden')
 
       # Show waitlist form
       signupHTML = HandlebarsTemplates['signup']()
@@ -269,10 +308,5 @@ $ ->
       $.magnificPopup.open config
 
       AwesomeTools.configureSignupForm()
-    , 4000
+    , newVisitorDemoDuration
   , 2000
-  
-
-  
-  
-  
