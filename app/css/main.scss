@@ -15,7 +15,7 @@ body {
 
 .placeholder { color: #aaa; }
 
-.signup {
+.mfp-content {
   text-align: center;
   padding: 20px 15px;
   color: $white;
@@ -26,15 +26,69 @@ body {
     margin-top: 0;
   }
 
-  p.subtitle { 
+  .subtitle { 
     font-size: 18px; 
     margin-top: 20px;
   }
+}
 
-  form {
+.btn-retro {
+  @include retro-btn;
+  background-color: #21748F;
+  padding: 15px;
+  font-size: 20px;
+
+  &.loading {
+    background-color: #525252;
+    cursor: not-allowed;
+  }
+}
+
+.share {
+  .signup-thx {
+    margin-bottom: 0;
+    margin-top: 30px;
+  }
+
+  .waitlist {
+    width: auto;
+    margin: 0 auto;
+    margin-top: 15px;
+    line-height: 1.5;
+  }
+
+  .current-spot, .new-spot { 
+    color: #8CDFFF; 
+    font-style: 20px;
+  }
+
+  .share-links {
+    width: 150px;
+    margin: 0 auto;
+    text-align: center;
+    margin-top: 20px;
+    
+    .fb-share {
+      margin-right: 30px;
+      float: left;
+      cursor: pointer;
+      img { height: 20px; }
+    }
+
+    .tw-share {
+      float: left;
+    }
+  }
+}
+
+.signup {
+
+  form.signup-form {
     max-width: 260px;
     margin: 0 auto;
     margin-top: 25px;
+  
+    .oh-no { margin-top: 4px; }
 
     .control-group {  
       @include clearfix;
@@ -79,18 +133,8 @@ body {
     }
 
     input[type="submit"] {
-      @include retro-btn;
-      background-color: #21748F;
       width: 260px;
-      padding: 15px;
-      font-size: 20px;
-      margin: 0 auto;
-      margin-top: 33px;
-
-      &.loading {
-        background-color: #525252;
-        cursor: not-allowed;
-      }
+      margin: 33px 0 auto;
     }
   }
 }

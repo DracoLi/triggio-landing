@@ -1,6 +1,7 @@
 require 'sinatra'
 require 'sinatra/support'
 require 'json'
+require 'pony'
 
 # Database
 require 'sinatra/activerecord'
@@ -88,19 +89,54 @@ class MyApp < Sinatra::Base
 
   post '/signup' do
     # Get company name and email
-    company = params[:company]
-    email = params[:email]
+    @company = params[:company]
+    @email = params[:email]
 
     # Save data
-    a = WaitList.create(company: company, email: email)
+    a = WaitList.create(company: @company, email: @email)
     unless a.valid?
       error_fields = a.errors.messages.keys
       error_msg = a.errors.messages
+    else
+      # Get waitlist position
+      currentPos = (WaitList.count * 3 + 20)
+      newPos = currentPos * 0.6
+      @queue = { :current => currentPos, :new => newPos.to_i }
+
+      # Send signup email
+      Pony.mail({
+        to: @email,
+        from: "Draco Li <draco@trigg.io>",
+        subject: "Thanks for being awesome and signing up for Triggio!",
+        # html_body: erb(:email, layout: false),
+        body: erb(:email, layout: false),
+        via: :smtp,
+        via_options: {
+          address: "smtp.mandrillapp.com",
+          port: '587',
+          enable_starttls_auto: true,
+          user_name: "draco@dracoli.com",
+          password: "NdosrPoWlLga9ATRDikxYA",
+          authentication: :plain,
+          domain: "localhost"
+        }
+      })
     end
-    fsd
-    content_type :json
-    {success: a.valid?, :error_fields => error_fields, :msg => error_msg }.to_json
     
+    content_type :json
+    {success: a.valid?, 
+      :error_fields => error_fields, 
+      :msg => error_msg,
+      :queue => @queue}.to_json
+  end
+
+  post '/shared' do
+    email = params[:email]
+
+    # Save this share in database
+    waitlist = WaitList.where(email: email).last
+    waitlist.shared = true
+    waitlist.save
   end
 
   run! if app_file == $0

@@ -10,13 +10,14 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20130728200642) do
+ActiveRecord::Schema.define(version: 20130806040542) do
 
   create_table "wait_lists", force: true do |t|
     t.string   "company"
     t.string   "email"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.boolean  "shared",     default: false
   end
 
 end

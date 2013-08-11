@@ -1,10 +1,13 @@
 <div class="share zoom-anim-dialog">
   <h1>Triggio</h1>
-  <p class="subtitle">Thank you for signing up!</p>
+  <p class="subtitle signup-thx">Thank you for signing up!</p>
   
-  <p class="message">You are currently <span class="current-spot">#60</span> in the waitlist, share Triggio now to cut ahead to <span class="new-spot">#50</span></p>
+  <p class="subtitle waitlist">You are currently <span class="current-spot">#{{current}}</span> in the waitlist.<br>Share Triggio once to cut ahead to <span class="new-spot">#{{new}}</span></p>
+  
+  <p class="subtitle sharing-success hidden">Congrats! You've just been bumped to <span class="new-spot">#{{new}}</span> in the waitlist!</p>
+
   <div class="share-links">
-    <a class="box fb">Facebook</div>
-    <div class="box tw">Twitter</div>
+    <div class="fb-share"><img src="/fb-icon.png"></div>
+    <div class="tw-share"></div>
   </div>
 </div>

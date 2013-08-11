@@ -10,7 +10,11 @@ soundManager.setup
 
 window.AwesomeTools =
 
+  # Opacity decreasing rate for our events list
   opacityChange: 10
+
+  targetCompany: null
+  targetEmail: null
 
   # Adds events to our demo layer and animate them in fancily
   addInitialEvents: (events) ->
@@ -122,12 +126,12 @@ window.AwesomeTools =
 
       # validate email
       unless email? and AwesomeTools.validateEmail(email)
-        AwesomeTools.handleSignupError 'email', 'Invalid emails'
+        @handleSignupError 'email', 'Invalid emails'
         hasError = true
 
       # validate company name
-      unless company? and company.length > 1
-        AwesomeTools.handleSignupError 'company', 'Invalid company name'
+      unless company?.length > 1
+        @handleSignupError 'company', 'Invalid company name'
         hasError = true
 
       return false if hasError
@@ -136,55 +140,107 @@ window.AwesomeTools =
       $signup.addClass 'loading'
       $submit = $signup.find('input[type="submit"]').addClass 'loading'
       $.post('/signup', {company: company, email: email})
-      .done (data) =>
-        # Server side validation returned
-        if data.success
-          console.log 'success'
-        else
-          for field in data.error_fields
-            @handleSignupError field, data.msg[field][0]
-        console.log data
-      .fail -> 
-        console.log 'failed'
-        $signup.find('.oh-no').html 'Oh no! Something went wrong...'
-      .always -> 
-        $signup.removeClass 'loading'
-        $submit.removeClass 'loading'
+        .done (data) =>
+          # Server side validation returned
+          if data.success
+            
+            @targetCompany = company
+            @targetEmail = email
 
-      console.log 'company registered!'
+            # Show our signedup demo after signup
+            @signedupDemo data.queue
+          else
+            for field in data.error_fields
+              @handleSignupError field, data.msg[field][0]
+        .fail -> 
+          console.log 'failed'
+          $signup.find('.oh-no').html 'Oh no! Something went wrong...'
+        .always -> 
+          $signup.removeClass 'loading'
+          $submit.removeClass 'loading'
 
       return false
 
-  signedupDemo: ->
-    console.log 'signedup demo'
+  signedupDemo: (queue) ->
+    console.log 'playing signedup demo'
 
     # Remove signin form
+    $.magnificPopup.close()
+    $('.demo-overlay').css 'opacity': 0
+    $('#demoLayer').css 'polyfilter', 'blur(0px)'
     
     # Play signedup events
+    setTimeout =>
+      @sendEvent 'Waitlist', 
+                 "#{@targetCompany} just joined our waitlist!",
+                 'fantastic'
+      setTimeout =>
+        @sendEvent 'Draco', 
+                   "OMG congrats team! #{@targetCompany} just signedup for Triggio!",
+                   'killing-spree'
+        setTimeout =>
+          @showSharePopup(queue)
+        , 6800
+      , 4000
+    , 1500
     
     # Show success and share overlay
     
     @configureShare()
   
+  showSharePopup: (queue) ->
+    # Show our overlay, hides demo
+    $('.demo-overlay').css 'opacity': 1
+    $('#demoLayer').css 'polyfilter', 'blur(3px)'
+
+    # Show share popup
+    shareHTML = HandlebarsTemplates['share'](queue)
+    config = 
+      'items': {src: shareHTML}
+      type: 'inline'
+      modal: true
+      mainClass: 'my-mfp-zoom-in share-popup'
+      overflowY: 'scroll'
+      removalDelay: 300
+    $.magnificPopup.open config
+
+    @configureShare()
+
   configureShare: ->
-    $('.share-links .fb').click (e) ->
-      e.preventDefault()
-      fbUrl = "https://www.facebook.com/sharer/sharer.php?u=#{encodeURIComponent(location.href)}"
-      @openShareWindow fbUrl
+    # Configure fb button
+    $('.share-links .fb-share').click (e) =>
+      @shareFBContent()
 
-    $('.share-links .tw').click (e) ->
-      e.preventDefault()
-      twitterMsg = "I just signed up for Triggio for my company! www.trigg.io"
-      twUrl = "http://twitter.com/home?status=#{encodeURIComponent(twitterMsg)}"
-      @openShareWindow fbshareUrl
+    # Configure twitter button and callback
+    twttr.widgets.createShareButton 'http://trigg.io', 
+      $('.share-links .tw-share')[0],
+      null
+      ,
+        count: 'none'
+        text: 'I just signed up my company for Triggio! Realtime musical notifications.'
 
-  openShareWindow: (url) ->
-    width = 626
-    height = 436
-    x = screen.width/2 - width/2
-    y = screen.height/2 - height/2
-    window.open url, 'Share', 
-                "width=#{width},height=#{height},left=#{x},top=#{y}"
+    twttr.ready (twttr) =>
+      twttr.events.bind 'tweet', (event) =>
+        @websiteShared()
+
+  websiteShared: ->
+    # Update UI to reflect shared
+    $('.share .waitlist').addClass 'hidden'
+    $('.share .sharing-success').removeClass 'hidden'
+
+    # Tell our database that this user has shared
+    $.post '/shared', {email: @targetEmail}
+
+  shareFBContent: ->
+    FB.ui
+      method: 'feed'
+      name: 'Triggio | Realtime Musical Notifications'
+      description: "Triggio, the realtime musical notifications for your company. Now open for limited beta signups."
+      link: "http://www.trigg.io"
+      picture: "http://www.trigg.io/triggio-fb.png"
+    , (response) =>
+      if response and response.post_id
+        @websiteShared()
 
 $ ->
   # Enable placeholder cross browser
@@ -207,7 +263,7 @@ $ ->
         'items': {src: signupHTML}
         type: 'inline'
         modal: true
-        mainClass: 'my-mfp-zoom-in sign-up'
+        mainClass: 'my-mfp-zoom-in signup-popup'
         overflowY: 'scroll'
         removalDelay: 300
       $.magnificPopup.open config
