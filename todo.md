@@ -1,11 +1,12 @@
 # TODOS
-1. Rerecord all LOL clips. They don't work on firefox
-2. ~~better error display for form submission~~
-3. ~~refactor/cleanup code~~
-4. ~~loading/working message for waitlist submission~~
-5. ~~fix created timezone~~
-6. finalize sign up email content
-7. ~~set up herou newrelic ping~~
-8. Test triggio on production
-9. ~~come up easy way to get waitlist data from production~~
-10. find ways to concat assets (since sintra assetpack not working)
+* ~~Rerecord all LOL clips. They don't work on firefox~~
+* ~~better error display for form submission~~
+* ~~refactor/cleanup code~~
+* ~~loading/working message for waitlist submission~~
+* ~~fix created timezone~~
+* ~~set up herou newrelic ping~~
+* ~~come up easy way to get waitlist data from production~~
+* finalize sign up email content
+* Test triggio on production
+* find ways to concat assets (since sintra assetpack not working)
+* Facebook share image not showing up
