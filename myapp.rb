@@ -71,7 +71,6 @@ class MyApp < Sinatra::Base
       '/vendor/jquery.transit/jquery.transit.js',
       '/vendor/soundmanager/script/soundmanager2.js',
       '/vendor/stroll/js/stroll.min.js',
-      '/js/templates.js',
       '/js/main.js'
     ]
 

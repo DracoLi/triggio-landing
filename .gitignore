@@ -25,3 +25,7 @@ _yardoc
 doc/
 
 *.sqlite3
+
+public/vendor
+public/css
+public/js
