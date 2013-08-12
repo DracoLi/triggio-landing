@@ -149,8 +149,8 @@ class MyApp < Sinatra::Base
   run! if app_file == $0
 end
 
-class Sinatra::AssetPack::Package
-  def to_production_html(path_prefix, options={})
-    to_development_html(path_prefix, options)
-  end
-end
+# class Sinatra::AssetPack::Package
+#   def to_production_html(path_prefix, options={})
+#     to_development_html(path_prefix, options)
+#   end
+# end
