@@ -115,8 +115,8 @@ class MyApp < Sinatra::Base
         to: @email,
         from: "Draco Li <draco@trigg.io>",
         subject: "Thanks for being awesome and signing up for Triggio!",
-        # html_body: erb(:email, layout: false),
-        body: erb(:email, layout: false),
+        html_body: erb(:email, layout: false),
+        # body: erb(:email, layout: false),
         via: :smtp,
         via_options: {
           address: "smtp.mandrillapp.com",
