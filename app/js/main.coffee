@@ -1,12 +1,49 @@
 DEBUG = true
 
-# setup our sound manager
-soundManager.setup 
-  preferFlash: false
-  debugMode: DEBUG
-  flashVersion: 9
-  url: "/assets/swf/soundmanager2.swf"
-  useHTML5Audio: true
+$ ->
+  DEBUG = $('body').data('env') == 'development'
+
+  # setup our sound manager
+  soundManager.setup 
+    preferFlash: false
+    debugMode: DEBUG
+    flashVersion: 9
+    url: "/assets/swf/soundmanager2.swf"
+    useHTML5Audio: true
+  
+  # Enable placeholder cross browser
+  $('input').placeholder()
+
+  ### Start our demo ###
+
+  # Send +1 visior event
+  newVisitorDemoDuration = 4 * 1000
+  setTimeout ->
+    AwesomeTools.sendEvent('Viewers', 
+                           'Someone just visited Triggio :)', 
+                           'new-visitor')
+    setTimeout ->
+      # Animate in our overlay
+      $('.demo-overlay').css 'opacity': 1
+      $('#demoLayer').css 'polyfilter', 'blur(3px)'
+
+      # Animate in our learn more link since its not part of waitlist popup
+      $('.learn-more').removeClass('hidden')
+
+      # Show waitlist form
+      signupHTML = HandlebarsTemplates['signup']()
+      config = 
+        'items': {src: signupHTML}
+        type: 'inline'
+        modal: true
+        mainClass: 'my-mfp-zoom-in signup-popup'
+        overflowY: 'scroll'
+        removalDelay: 300
+      $.magnificPopup.open config
+
+      AwesomeTools.configureSignupForm()
+    , newVisitorDemoDuration
+  , 2000
 
 window.AwesomeTools =
 
@@ -277,39 +314,3 @@ window.AwesomeTools =
 
     # Tell our database that this user has shared
     $.post '/shared', {email: @targetEmail}
-
-
-$ ->
-  # Enable placeholder cross browser
-  $('input').placeholder()
-
-  ### Start our demo ###
-
-  # Send +1 visior event
-  newVisitorDemoDuration = 4 * 1000
-  setTimeout ->
-    AwesomeTools.sendEvent('Viewers', 
-                           'Someone just visited Triggio :)', 
-                           'new-visitor')
-    setTimeout ->
-      # Animate in our overlay
-      $('.demo-overlay').css 'opacity': 1
-      $('#demoLayer').css 'polyfilter', 'blur(3px)'
-
-      # Animate in our learn more link since its not part of waitlist popup
-      $('.learn-more').removeClass('hidden')
-
-      # Show waitlist form
-      signupHTML = HandlebarsTemplates['signup']()
-      config = 
-        'items': {src: signupHTML}
-        type: 'inline'
-        modal: true
-        mainClass: 'my-mfp-zoom-in signup-popup'
-        overflowY: 'scroll'
-        removalDelay: 300
-      $.magnificPopup.open config
-
-      AwesomeTools.configureSignupForm()
-    , newVisitorDemoDuration
-  , 2000
